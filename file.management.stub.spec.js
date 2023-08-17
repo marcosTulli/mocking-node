@@ -2,7 +2,6 @@ const { expect } = require('chai');
 const { restore, stub } = require('sinon');
 const fs = require('fs');
 const proxyquire = require('proxyquire');
-const fileManagement = require('./file.management');
 
 describe('File Management', () => {
   afterEach(() => {
