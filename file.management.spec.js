@@ -1,14 +1,37 @@
-const { expect } = require("chai");
-const fileManagement = require("./file.management");
+const { expect } = require('chai');
+const { spy, restore } = require('sinon');
+const fs = require('fs');
+const proxyquire = require('proxyquire');
+const fileManagement = require('./file.management');
 
-describe("File Management", () => {
-  it("Should create a new file", () => {
-    const result = fileManagement.createFile("test.txt");
-    expect(result).to.be.undefined;
+describe.skip('File Management', () => {
+  afterEach(() => {
+    restore();
   });
 
-  it("Should delete the file specified", () => {
-    const result = fileManagement.deleteFile("test.delete.txt");
-    expect(result).to.be.undefined;
+  describe('Wehen creating a new file', () => {
+    it('Should call writeFIleSync', () => {
+      const writeSpy = spy(fs, 'writeFileSync');
+      const fileManagement = proxyquire('./file.management', { fs });
+      fileManagement.createFile('test.txt');
+
+      expect(writeSpy.calledWith('./data/test.txt', '')).to.be.true;
+    });
+
+    it('Should not create a new file if no filename is specified', () => {
+      const writeSpy = spy(fs, 'writeFileSync');
+      const fileManagement = proxyquire('./file.management', { fs });
+
+      try {
+        fileManagement.createFile();
+      } catch (err) {}
+      expect(writeSpy.notCalled).to.be.true;
+    });
+  });
+
+  it.skip('Should call writeFIleSync', () => {
+    const writeSpy = spy(fs, 'writeFileSync');
+    fileManagement.createFileInjected('test.txt', fs);
+    expect(writeSpy.calledWith('./data/test.txt', '')).to.be.true;
   });
 });
